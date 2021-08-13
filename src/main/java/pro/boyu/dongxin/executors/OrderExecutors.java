@@ -1,4 +1,4 @@
-package com.uusafe.platform.test.common.executors;
+package pro.boyu.dongxin.executors;
 
 public class OrderExecutors {
     public static int parallelism;

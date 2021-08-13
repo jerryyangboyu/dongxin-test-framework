@@ -1,8 +1,8 @@
-package com.uusafe.platform.test.common.utils;
+package pro.boyu.dongxin.utils;
 
-import com.uusafe.platform.test.common.utils.iface.Observable;
-import com.uusafe.platform.test.common.utils.iface.Observer;
-import com.uusafe.platform.test.common.utils.jucservice.Unsubscribtion;
+import pro.boyu.dongxin.utils.iface.Observable;
+import pro.boyu.dongxin.utils.iface.Observer;
+import pro.boyu.dongxin.utils.jucservice.Unsubscribtion;
 
 import java.util.Iterator;
 import java.util.LinkedList;

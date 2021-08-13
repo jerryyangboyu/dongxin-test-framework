@@ -1,9 +1,7 @@
-package com.uusafe.platform.test.common.bean;
+package pro.boyu.dongxin.framework;
 
-import com.uusafe.platform.test.common.bean.annotations.TestClass;
-import com.uusafe.platform.test.common.bean.annotations.TestMethod;
-import com.uusafe.platform.test.common.utils.jucservice.Subscriber;
-import com.uusafe.platform.test.common.utils.jucservice.Unsubscribtion;
+import pro.boyu.dongxin.framework.annotations.TestClass;
+import pro.boyu.dongxin.framework.annotations.TestMethod;
 import org.apache.poi.ss.formula.functions.T;
 
 import java.lang.reflect.Method;

@@ -1,6 +1,6 @@
-package com.uusafe.platform.test.common.utils.iface;
+package pro.boyu.dongxin.utils.iface;
 
-import com.uusafe.platform.test.common.utils.jucservice.Unsubscribtion;
+import pro.boyu.dongxin.utils.jucservice.Unsubscribtion;
 
 public interface Observable<T> {
     public Unsubscribtion subscribe(Observer<T> observer);

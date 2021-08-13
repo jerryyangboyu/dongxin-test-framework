@@ -1,4 +1,4 @@
-package com.uusafe.platform.test.common.bean;
+package pro.boyu.dongxin.framework;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
@@ -7,12 +7,11 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.*;
 
-import com.uusafe.platform.test.common.bean.annotations.*;
-import com.uusafe.platform.test.common.utils.LocalJedisPool;
-import com.uusafe.platform.test.common.utils.SyncTestCaseExecutorManager;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pro.boyu.dongxin.framework.annotations.*;
+import pro.boyu.dongxin.framework.executor.SyncTestCaseExecutor;
+
 
 /**
  *
@@ -23,7 +22,6 @@ public class OrderedPackageLoader extends AbstractPackageLoader{
 	@Deprecated
 	static Object lock=new Object();
 	private Map<Integer, List<SyncTestCaseExecutor>> syncExecutorMap=new HashMap<Integer,List<SyncTestCaseExecutor>>();
-	private SyncTestCaseExecutorManager syncTestCaseExecutorManager;
 	private Map<Class<?>,Object> testClassInstanceMap=new HashMap<>();
 	private Map<Class<?>,Object> serviceClassInstanceMap=new HashMap<>();
     protected OrderedPackageLoader(Class<?> c) {

@@ -1,12 +1,9 @@
-package com.uusafe.platform.test.common.bean;
+package pro.boyu.dongxin.framework;
 
-import com.uusafe.platform.test.common.utils.jucservice.AbstractPublisher;
-import com.uusafe.platform.test.common.utils.jucservice.Subscriber;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Map;
 
 public class ExecutionHandlerPublisher {

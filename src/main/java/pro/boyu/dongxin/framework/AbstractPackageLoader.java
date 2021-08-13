@@ -1,8 +1,8 @@
-package com.uusafe.platform.test.common.bean;
+package pro.boyu.dongxin.framework;
 
-import com.uusafe.platform.test.common.bean.annotations.Exclude;
-import com.uusafe.platform.test.common.bean.annotations.TestClass;
-import com.uusafe.platform.test.common.bean.annotations.TestMethod;
+import pro.boyu.dongxin.framework.annotations.Exclude;
+import pro.boyu.dongxin.framework.annotations.TestClass;
+import pro.boyu.dongxin.framework.annotations.TestMethod;
 import org.apache.log4j.Logger;
 
 import java.lang.reflect.Constructor;

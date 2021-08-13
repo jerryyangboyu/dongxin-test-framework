@@ -1,4 +1,4 @@
-package com.uusafe.platform.test.common.bean;
+package pro.boyu.dongxin.framework;
 
 import java.util.Stack;
 

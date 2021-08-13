@@ -1,4 +1,4 @@
-package com.uusafe.platform.test.common.webclient;
+package pro.boyu.dongxin.webclient;
 
 import java.io.*;
 import java.net.HttpURLConnection;

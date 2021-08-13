@@ -1,5 +1,4 @@
-package com.uusafe.platform.test.common.bean.annotations;
-
+package pro.boyu.dongxin.framework.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -8,6 +7,7 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Exclude {
-    public String[] classes();
+public @interface TestClass {
+    public String value() default "";
+    public String description() default "";
 }

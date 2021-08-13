@@ -1,4 +1,4 @@
-package com.uusafe.platform.test.common.utils;
+package pro.boyu.dongxin.utils;
 
 public class KeyManager {
     private static String key = TestValue.getRandomFileName();

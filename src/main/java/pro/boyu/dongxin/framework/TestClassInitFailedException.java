@@ -1,4 +1,4 @@
-package com.uusafe.platform.test.common.bean;
+package pro.boyu.dongxin.framework;
 
 public class TestClassInitFailedException extends Exception{
     public TestClassInitFailedException(String className,String message){

@@ -1,4 +1,4 @@
-package com.uusafe.platform.test.common.executors;
+package pro.boyu.dongxin.executors;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.CyclicBarrier;

@@ -1,6 +1,7 @@
-package com.uusafe.platform.test.common.bean;
+package pro.boyu.dongxin.framework;
 
-import com.uusafe.platform.test.common.AsyncTestMethodExecutor;
+import pro.boyu.dongxin.framework.executor.AsyncTestMethodExecutor;
+import pro.boyu.dongxin.framework.executor.SyncTestCaseExecutor;
 
 public class TestClassManager {
     SyncTestCaseExecutor syncTestCaseExecutor;

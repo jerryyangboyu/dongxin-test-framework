@@ -1,4 +1,4 @@
-package com.uusafe.platform.test.common.utils;
+package pro.boyu.dongxin.utils;
 
 import com.github.javafaker.*;
 

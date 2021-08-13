@@ -1,4 +1,4 @@
-package com.uusafe.platform.test.common.bean.annotations;
+package pro.boyu.dongxin.framework.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

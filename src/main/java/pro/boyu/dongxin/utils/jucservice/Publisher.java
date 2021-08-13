@@ -1,6 +1,6 @@
-package com.uusafe.platform.test.common.utils.jucservice;
+package pro.boyu.dongxin.utils.jucservice;
 
-import com.uusafe.platform.test.common.utils.jucservice.AbstractPublisher.InvalidSubscriberIdException;
+import pro.boyu.dongxin.utils.jucservice.AbstractPublisher.InvalidSubscriberIdException;
 
 public interface Publisher<T> {
 	public void rigster(Subscriber<T> subscriber) throws InvalidSubscriberIdException;

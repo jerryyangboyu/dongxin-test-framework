@@ -1,4 +1,4 @@
-package com.uusafe.platform.test.common.utils.jucservice;
+package pro.boyu.dongxin.utils.jucservice;
 
 
 public interface Subscriber<T> {

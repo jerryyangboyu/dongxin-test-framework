@@ -1,8 +1,8 @@
-package com.uusafe.platform.test.common.bean;
+package pro.boyu.dongxin.framework.executor;
 
 import java.lang.reflect.Method;
 
-import com.uusafe.platform.test.common.utils.Subject;
+import pro.boyu.dongxin.utils.Subject;
 
 public class SyncTestCaseExecutor extends Thread  {
 	private Method m;

@@ -1,6 +1,6 @@
-package com.uusafe.platform.test.common.executors;
+package pro.boyu.dongxin.executors;
 
-import com.uusafe.platform.test.common.bean.AbstractPackageLoader;
+import pro.boyu.dongxin.framework.AbstractPackageLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

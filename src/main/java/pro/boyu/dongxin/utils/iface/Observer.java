@@ -1,4 +1,4 @@
-package com.uusafe.platform.test.common.utils.iface;
+package pro.boyu.dongxin.utils.iface;
 
 public interface Observer<T>{
 

@@ -1,4 +1,4 @@
-package com.uusafe.platform.test.common.utils.jucservice;
+package pro.boyu.dongxin.utils.jucservice;
 
 import java.util.concurrent.CountDownLatch;
 
