@@ -10,8 +10,9 @@ import java.util.List;
 
 public class Subject<T> implements Observable<T> {
     private List<Observer<T>> observers=new LinkedList<Observer<T>>();
-    protected void updateData(T data){
+    protected synchronized void updateData(T data){
         this.data=data;
+        this.infoAll();
     }
     private T data;
     public synchronized void infoAll(){
@@ -65,8 +66,5 @@ public class Subject<T> implements Observable<T> {
         return null;
     }
 
-    public synchronized void updateDate(T data){
-        this.data=data;
-        this.infoAll();
-    }
+   
 }

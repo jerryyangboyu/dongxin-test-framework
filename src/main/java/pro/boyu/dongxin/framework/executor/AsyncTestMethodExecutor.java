@@ -6,15 +6,15 @@ import pro.boyu.dongxin.utils.Subject;
 import pro.boyu.dongxin.utils.iface.Observable;
 
 public class AsyncTestMethodExecutor extends Thread{
-
     TestMethodInvokeInfo testMethodInvokeInfo;
     Object asyncLock;
+    Subject<TestExecuteInfo> asyncSubject=new Subject<TestExecuteInfo>();
     public AsyncTestMethodExecutor(TestMethodInvokeInfo testMethodInvokeInfo,Object asyncLock){
         this.testMethodInvokeInfo=testMethodInvokeInfo;
         this.asyncLock=asyncLock;
     }
     public void run(){
-
+    	
         synchronized (asyncLock){
 
             asyncLock.notify();
