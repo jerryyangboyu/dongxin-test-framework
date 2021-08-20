@@ -9,8 +9,15 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class Subject<T> implements Observable<T> {
+	private String idString;
+	public Subject(String id) {
+		this.idString=id;
+	}
+	public String getId() {
+		return this.idString;
+	}
     private List<Observer<T>> observers=new LinkedList<Observer<T>>();
-    protected synchronized void updateData(T data){
+    public synchronized void updateData(T data){
         this.data=data;
         this.infoAll();
     }
@@ -27,11 +34,18 @@ public class Subject<T> implements Observable<T> {
         }
     }
 
-    public synchronized void completed(){
-        observers.forEach(observer->{
-            observer.completed();
-        });
+  
+    
+    
+    protected synchronized void completedSuccess() {
+    	
     }
+    protected synchronized void completedError() {
+    	
+    }
+    protected synchronized  List<Observer<T>> getObservers() {
+		return observers;
+	}
 
     @Override
     public synchronized Unsubscribtion subscribe(Observer<T> observer) {
@@ -45,8 +59,8 @@ public class Subject<T> implements Observable<T> {
         };
     }
 
-    @Override
-    public synchronized void remove(Observer<T> observer) {
+   
+    protected synchronized void remove(Observer<T> observer) {
         Iterator<Observer<T>> observerIterator=Subject.this.observers.iterator();
         while(observerIterator.hasNext()){
             Observer<T> currentObserver=observerIterator.next();
@@ -56,14 +70,14 @@ public class Subject<T> implements Observable<T> {
         }
     }
 
-    @Override
-    public synchronized void add(Observer<T> observer) {
+    
+    protected synchronized void add(Observer<T> observer) {
         this.observers.add(observer);
     }
 
     @Override
     public String name() {
-        return null;
+        return idString;
     }
 
    

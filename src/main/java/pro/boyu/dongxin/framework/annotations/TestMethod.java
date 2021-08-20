@@ -15,4 +15,5 @@ public @interface TestMethod {
     public boolean sync() default true;
     public int threadsNum() default 1;
     public long maxTime() default 60000;
+    public long repeatTime() default 1;
 }

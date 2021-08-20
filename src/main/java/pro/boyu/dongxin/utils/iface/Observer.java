@@ -7,4 +7,6 @@ public interface Observer<T>{
     public void error(Exception e);
 
     public void completed();
+
+    
 }
