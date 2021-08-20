@@ -6,8 +6,8 @@ import java.util.function.Predicate;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import pro.boyu.dongxin.utils.Logger;
+import pro.boyu.dongxin.utils.LoggerFactory;
 
 import pro.boyu.dongxin.framework.OrderedPackageLoader;
 import pro.boyu.dongxin.framework.constenum.TestCaseState;
@@ -82,8 +82,6 @@ public class TestMethodObserver implements Observer<TestExecuteInfo>{
 				logger.info("testcase {} log in {} ,message : ",this.methodName,getLocalDate(ri.getTime()),ri.getMessage());
 			});
 		}
-		
-		
 	}
 	
 	public void showInfo() {

@@ -3,8 +3,8 @@ package pro.boyu.dongxin.utils.jucservice;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import pro.boyu.dongxin.utils.Logger;
+import pro.boyu.dongxin.utils.LoggerFactory;
 
 public class JedisTestJUCPublisher<T> extends AbstractPublisher<T> {
 	private static final Logger logger=LoggerFactory.getLogger("");

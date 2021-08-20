@@ -20,9 +20,6 @@ public class SyncTestMethodExecutorManager extends Thread{
 	
 	private Object lockObject;
 	Map<Integer, List<SyncTestCaseExecutor>> syncTestCaseExecutors=new HashMap<>();
-	public SyncTestMethodExecutorManager(Object targetObject) {
-		
-	}
 	
 	public void addMethod(TestMethodInvokeInfo testMethodInvokeInfo) {
 		int level=testMethodInvokeInfo.getTestMethod().priority();
@@ -36,17 +33,14 @@ public class SyncTestMethodExecutorManager extends Thread{
 	
 	public void exec() {
 		Set<Integer> keys=this.syncTestCaseExecutors.keySet();
-		Integer[] seqIntegers=keys.toArray((value)->{
-			final int size=keys.size();
-			Integer[] seq=new Integer[size];
-			int count=0;
-			for(var key :keys) {
-				seq[count]=key;
-				count++;
-			}
-			 Arrays.sort(seq);
-			 return seq;
-		});
+		final int size=keys.size();
+		Integer[] seqIntegers = new Integer[size];
+		int count=0;
+		for(Integer key :keys) {
+			seqIntegers[count]=key;
+			count++;
+		}
+		Arrays.sort(seqIntegers);
 		for(int key:seqIntegers) {
 			List<SyncTestCaseExecutor> executors=this.syncTestCaseExecutors.get(keys);
 			for(SyncTestCaseExecutor executor:executors) {

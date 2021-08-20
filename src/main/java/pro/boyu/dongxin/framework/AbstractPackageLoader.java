@@ -3,7 +3,8 @@ package pro.boyu.dongxin.framework;
 import pro.boyu.dongxin.framework.annotations.Exclude;
 import pro.boyu.dongxin.framework.annotations.TestClass;
 import pro.boyu.dongxin.framework.annotations.TestMethod;
-import org.apache.log4j.Logger;
+import pro.boyu.dongxin.utils.Logger;
+import pro.boyu.dongxin.utils.LoggerFactory;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -14,7 +15,7 @@ import java.util.*;
 public class AbstractPackageLoader {
     private final Class<?> applicationClass;
     private final Map<String, Class<?>> iocContainer = new HashMap<>();
-    Logger logger = Logger.getLogger(AbstractPackageLoader.class);
+    Logger logger = LoggerFactory.getLogger(AbstractPackageLoader.class);
     public static ExecutionHandlerPublisher publisher = new ExecutionHandlerPublisher();
 
     protected AbstractPackageLoader(Class<?> c) {

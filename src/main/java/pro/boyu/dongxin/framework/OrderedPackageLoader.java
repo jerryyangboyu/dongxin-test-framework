@@ -7,13 +7,17 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.*;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import pro.boyu.dongxin.utils.Logger;
+import pro.boyu.dongxin.utils.LoggerFactory;
 
 import pro.boyu.dongxin.framework.annotations.*;
 import pro.boyu.dongxin.framework.executor.SyncTestCaseExecutor;
 
 import pro.boyu.dongxin.framework.exception.*;
+import pro.boyu.dongxin.framework.executor.manager.SyncTestMethodExecutorManager;
+import pro.boyu.dongxin.framework.infobean.TestMethodInvokeInfo;
+import pro.boyu.dongxin.utils.Subject;
+
 /**
  *
  */
@@ -27,6 +31,7 @@ public class OrderedPackageLoader extends AbstractPackageLoader {
 	private Map<Integer, List<SyncTestCaseExecutor>> syncExecutorMap = new HashMap<Integer, List<SyncTestCaseExecutor>>();
 	private Map<Class<?>, Object> testClassInstanceMap = new HashMap<>();
 	private Map<Class<?>, Object> serviceClassInstanceMap = new HashMap<>();
+	private SyncTestMethodExecutorManager syncManager = new SyncTestMethodExecutorManager();
 
 	protected OrderedPackageLoader(Class<?> c) {
 		super(c);
@@ -56,6 +61,16 @@ public class OrderedPackageLoader extends AbstractPackageLoader {
 				System.exit(0);
 			} catch (Exception e1) {
 				logger.error(e1.getMessage());
+			}
+		}
+
+		// executing test class
+		for (Class<?> clazz: testClassInstanceMap.keySet()) {
+			try {
+				this.processTestClazz(clazz, testClassInstanceMap.get(clazz));
+
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		}
 	}
@@ -94,7 +109,8 @@ public class OrderedPackageLoader extends AbstractPackageLoader {
 
 	protected void processTestClazz(Class<?> clazz, Object target)
 			throws InvocationTargetException, IllegalAccessException {
-		Map<Integer, List<Method>> testMethodsMap = new HashMap<Integer, List<Method>>();
+		SyncTestMethodExecutorManager syncManager = new SyncTestMethodExecutorManager();
+		Map<Integer, List<Method>> testMethodsMap = new HashMap<>();
 		TestClassManager testClazzExecutor = new TestClassManager(target);
 		// 扫描TestClazz下所有方法，首先处理带有TestInit注解的初始化工作，支持注入注册过的Service
 		for (Method method : target.getClass().getDeclaredMethods()) {
@@ -103,16 +119,20 @@ public class OrderedPackageLoader extends AbstractPackageLoader {
 				method.invoke(target, dependencyDetection(method, target));
 			}
 			if (method.isAnnotationPresent(TestMethod.class)) {
-				processTestMethod(target, method, clazz);
+
+				processSyncTestMethod(target, method, clazz);
 			}
 		}
 	}
 
-	protected void processTestMethod(Object obj, Method m, Class<?> clazz) {
+	protected void processSyncTestMethod(Object target, Method m, Class<?> clazz) throws InvocationTargetException, IllegalAccessException {
 		for (Annotation annotation : m.getAnnotations()) {
 			if (annotation instanceof TestMethod) {
+				// retrieve info
 				TestMethod testMethod = (TestMethod) annotation;
-				
+				TestMethodInvokeInfo info = new TestMethodInvokeInfo(target, m, testMethod, dependencyDetection(m, target));
+				syncManager.addMethod(info);
+				syncManager.exec();
 			}
 		}
 	}
@@ -209,5 +229,21 @@ public class OrderedPackageLoader extends AbstractPackageLoader {
 		Set<Class<?>> classes = frameworkApplication.scanPackage();
 		frameworkApplication.loadIntoIoc(classes);
 		frameworkApplication.processIocContainer();
+	}
+}
+
+class Test {
+	private Object o;
+
+	@TestInit
+	void init(Object o) {
+		o = o;
+	}
+
+	@TestMethod
+	void test1(Object o, Subject<String> a) {
+		a.updateData("xx");
+
+
 	}
 }
