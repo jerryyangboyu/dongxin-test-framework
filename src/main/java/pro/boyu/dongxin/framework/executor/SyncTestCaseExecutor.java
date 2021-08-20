@@ -75,12 +75,14 @@ public class SyncTestCaseExecutor extends TestMethodExecutor {
 				for (; time < this.testMethod.repeatTime(); time++) {
 					this.method.invoke(targetObject, args);
 				}
+				this.syncTestCaseExecutorSubject.completedSuccess();
 				
 			} catch (Exception e) {
 				// TODO: handle exception
 				this.syncTestCaseExecutorSubject.updateData(new TestExecuteInfo(System.currentTimeMillis(), TestCaseState.RUNNING, TestCaseInfoUtil.executeExceptionInfoUtil(method.getName(), time, e.getMessage())));
 				this.syncTestCaseExecutorSubject.completedError(e);
 			}
+			
 			
 		}
 
@@ -91,4 +93,6 @@ public class SyncTestCaseExecutor extends TestMethodExecutor {
 		// TODO Auto-generated method stub
 		return this.syncTestCaseExecutorSubject;
 	}
+
+	
 }

@@ -13,14 +13,12 @@ import java.util.SortedSet;
 import java.util.function.IntFunction;
 
 import pro.boyu.dongxin.framework.executor.SyncTestCaseExecutor;
+import pro.boyu.dongxin.framework.executor.TestMethodObserver;
 import pro.boyu.dongxin.framework.infobean.TestMethodInvokeInfo;
 
 public class SyncTestMethodExecutorManager extends Thread{
 	
 	private Object lockObject;
-	
-	
-	
 	Map<Integer, List<SyncTestCaseExecutor>> syncTestCaseExecutors=new HashMap<>();
 	public SyncTestMethodExecutorManager(Object targetObject) {
 		
@@ -51,7 +49,12 @@ public class SyncTestMethodExecutorManager extends Thread{
 		});
 		for(int key:seqIntegers) {
 			List<SyncTestCaseExecutor> executors=this.syncTestCaseExecutors.get(keys);
-			
+			for(SyncTestCaseExecutor executor:executors) {
+				TestMethodObserver observer=new TestMethodObserver(getName());
+				observer.subscribe(executor.testMethodObervable());
+				executor.start();
+				observer.exportInfos();
+			}
 		}
 	}
 	
