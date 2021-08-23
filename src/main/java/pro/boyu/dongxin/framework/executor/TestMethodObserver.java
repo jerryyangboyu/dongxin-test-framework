@@ -2,12 +2,10 @@ package pro.boyu.dongxin.framework.executor;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.function.Predicate;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
-import pro.boyu.dongxin.utils.Logger;
-import pro.boyu.dongxin.utils.LoggerFactory;
+import pro.boyu.dongxin.utils.logger.Logger;
+import pro.boyu.dongxin.utils.logger.LoggerFactory;
 
 import pro.boyu.dongxin.framework.OrderedPackageLoader;
 import pro.boyu.dongxin.framework.constenum.TestCaseState;

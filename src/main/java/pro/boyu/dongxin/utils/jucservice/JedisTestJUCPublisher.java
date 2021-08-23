@@ -3,11 +3,11 @@ package pro.boyu.dongxin.utils.jucservice;
 import java.util.HashMap;
 import java.util.Map;
 
-import pro.boyu.dongxin.utils.Logger;
-import pro.boyu.dongxin.utils.LoggerFactory;
+import pro.boyu.dongxin.utils.logger.Logger;
+import pro.boyu.dongxin.utils.logger.LoggerFactory;
 
 public class JedisTestJUCPublisher<T> extends AbstractPublisher<T> {
-	private static final Logger logger=LoggerFactory.getLogger("");
+	private static final Logger logger= LoggerFactory.getLogger("");
 	public JedisTestJUCPublisher(String id) {
 		super(id);
 		// TODO Auto-generated constructor stub

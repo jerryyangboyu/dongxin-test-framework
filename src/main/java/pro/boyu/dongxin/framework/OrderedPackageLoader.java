@@ -7,8 +7,8 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.*;
 
-import pro.boyu.dongxin.utils.Logger;
-import pro.boyu.dongxin.utils.LoggerFactory;
+import pro.boyu.dongxin.utils.logger.Logger;
+import pro.boyu.dongxin.utils.logger.LoggerFactory;
 
 import pro.boyu.dongxin.framework.annotations.*;
 import pro.boyu.dongxin.framework.executor.SyncTestCaseExecutor;

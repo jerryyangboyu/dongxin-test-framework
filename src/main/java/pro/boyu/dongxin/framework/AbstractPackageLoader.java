@@ -3,8 +3,8 @@ package pro.boyu.dongxin.framework;
 import pro.boyu.dongxin.framework.annotations.Exclude;
 import pro.boyu.dongxin.framework.annotations.TestClass;
 import pro.boyu.dongxin.framework.annotations.TestMethod;
-import pro.boyu.dongxin.utils.Logger;
-import pro.boyu.dongxin.utils.LoggerFactory;
+import pro.boyu.dongxin.utils.logger.Logger;
+import pro.boyu.dongxin.utils.logger.LoggerFactory;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;

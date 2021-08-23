@@ -1,8 +1,8 @@
 package pro.boyu.dongxin.executors;
 
 import pro.boyu.dongxin.framework.AbstractPackageLoader;
-import pro.boyu.dongxin.utils.Logger;
-import pro.boyu.dongxin.utils.LoggerFactory;
+import pro.boyu.dongxin.utils.logger.Logger;
+import pro.boyu.dongxin.utils.logger.LoggerFactory;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;

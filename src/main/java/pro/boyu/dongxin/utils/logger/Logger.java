@@ -1,4 +1,4 @@
-package pro.boyu.dongxin.utils;
+package pro.boyu.dongxin.utils.logger;
 
 import java.text.MessageFormat;
 

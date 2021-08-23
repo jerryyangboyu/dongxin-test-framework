@@ -1,7 +1,7 @@
 package pro.boyu.dongxin.executors;
 
-import pro.boyu.dongxin.utils.Logger;
-import pro.boyu.dongxin.utils.LoggerFactory;
+import pro.boyu.dongxin.utils.logger.Logger;
+import pro.boyu.dongxin.utils.logger.LoggerFactory;
 
 import java.util.LinkedList;
 import java.util.List;
