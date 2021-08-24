@@ -1,6 +1,5 @@
 package pro.boyu.dongxin.framework;
 
-import pro.boyu.dongxin.utils.logger.Logger;
 import pro.boyu.dongxin.utils.logger.LoggerFactory;
 
 public class TestApplication {

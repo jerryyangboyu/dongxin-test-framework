@@ -3,6 +3,7 @@ package pro.boyu.dongxin.framework.infobean;
 import pro.boyu.dongxin.framework.annotations.TestMethod;
 
 import java.lang.reflect.Method;
+import java.util.concurrent.TimeUnit;
 
 public class MethodExecutionInfo {
     private final String className;
@@ -12,6 +13,7 @@ public class MethodExecutionInfo {
     private final TestMethod testMethod;
     private final Object[] args;
     private final Object target;
+    private TimeUnit timeUnit = TimeUnit.SECONDS;
 
     public MethodExecutionInfo(Object target, Method method, TestMethod testMethod, Object... args) {
         this.className = "Anonymous class";
@@ -59,5 +61,13 @@ public class MethodExecutionInfo {
 
     public Class<?> getClazz() {
         return clazz;
+    }
+
+    public TimeUnit getTimeUnit() {
+        return timeUnit;
+    }
+
+    public void setTimeUnit(TimeUnit unit) {
+        this.timeUnit = unit;
     }
 }

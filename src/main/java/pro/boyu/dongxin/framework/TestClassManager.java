@@ -1,11 +1,11 @@
 package pro.boyu.dongxin.framework;
 
-import pro.boyu.dongxin.framework.executor.AsyncExecutor;
-import pro.boyu.dongxin.framework.executor.SyncExecutor;
+import pro.boyu.dongxin.concurrent.RepeatedThread;
+import pro.boyu.dongxin.framework.executor.SimpleExecutor;
 
 public class TestClassManager {
-    SyncExecutor syncExecutor;
-    AsyncExecutor asyncExecutor;
+    SimpleExecutor simpleExecutor;
+    RepeatedThread repeatedThread;
     Object stepLock=new Object();
     public TestClassManager(Object testClazzInstance){
 

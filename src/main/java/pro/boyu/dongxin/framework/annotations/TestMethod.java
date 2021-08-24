@@ -12,8 +12,9 @@ public @interface TestMethod {
     public boolean await() default true;
     public String description() default "";
     public int priority() default 0;
+    @Deprecated
     public boolean sync() default true;
     public int threadsNum() default 1;
-    public long maxTime() default 60000;
-    public long repeatTime() default 1;
+    public int maxTime() default 3;
+    public int repeatTime() default 1;
 }

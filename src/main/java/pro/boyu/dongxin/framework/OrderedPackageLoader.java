@@ -115,15 +115,8 @@ public class OrderedPackageLoader extends AbstractPackageLoader {
 			}
 			if (method.isAnnotationPresent(TestMethod.class)) {
 				TestMethod testMethod = method.getAnnotation(TestMethod.class);
-				if (testMethod.sync()) {
-					if (null == syncManager) {
-						syncManager = new SyncExecutorManager();
-					}
-					processSyncTestMethod(clazz, target, method, testMethod, syncManager);
-				} else {
-					// TODO impl async manager
-				}
-
+				if (null == syncManager) syncManager = new SyncExecutorManager();
+				processSyncTestMethod(clazz, target, method, testMethod, syncManager);
 			}
 		}
 	}

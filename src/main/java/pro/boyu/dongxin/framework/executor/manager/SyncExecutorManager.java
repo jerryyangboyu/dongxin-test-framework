@@ -1,7 +1,9 @@
 package pro.boyu.dongxin.framework.executor.manager;
 
+import pro.boyu.dongxin.concurrent.ParallelExecutors;
 import pro.boyu.dongxin.framework.constenum.TestCaseState;
-import pro.boyu.dongxin.framework.executor.SyncExecutor;
+import pro.boyu.dongxin.framework.executor.Executor;
+import pro.boyu.dongxin.framework.executor.SimpleExecutor;
 import pro.boyu.dongxin.framework.subscription.ExecutionObserver;
 import pro.boyu.dongxin.framework.infobean.ExecutionInfo;
 import pro.boyu.dongxin.framework.infobean.MethodExecutionInfo;
@@ -11,25 +13,30 @@ import java.util.*;
 public class SyncExecutorManager extends Thread{
 	
 	private final Object lockObject = new Object();
-	private final Map<Integer, List<SyncExecutor>> syncTestCaseExecutors = new HashMap<>();
 
-	public void addMethod(MethodExecutionInfo methodExecutionInfo) {
-		int level= methodExecutionInfo.getTestMethod().priority();
+	protected final Map<Integer, List<Executor>> syncTestCaseExecutors = new HashMap<>();
+
+	public void addMethod(MethodExecutionInfo info) {
+		int level= info.getTestMethod().priority();
 		if(!syncTestCaseExecutors.containsKey(level)) {
-			syncTestCaseExecutors.put(level, new LinkedList<SyncExecutor>());
+			syncTestCaseExecutors.put(level, new LinkedList<>());
 		}
-		syncTestCaseExecutors.get(level).add(new SyncExecutor(methodExecutionInfo, lockObject));
+		if (info.getTestMethod().threadsNum() > 1) {
+			syncTestCaseExecutors.get(level).add(new ParallelExecutors(info));
+		} else {
+			syncTestCaseExecutors.get(level).add(new SimpleExecutor(info, lockObject));
+		}
 	}
 	
 	
 	public void exec() {
 		Set<Integer> keys = this.syncTestCaseExecutors.keySet();
 		keys.stream().sorted().forEach((Integer key) -> {
-			List<SyncExecutor> executors=this.syncTestCaseExecutors.get(key);
-			for(SyncExecutor executor:executors) {
+			List<Executor> executors=this.syncTestCaseExecutors.get(key);
+			for(Executor executor:executors) {
 				synchronized (this.lockObject){
 					ExecutionObserver observer=new ExecutionObserver();
-					observer.subscribe(executor.testMethodObservable());
+					observer.subscribe(executor.getObservable());
 					executor.start();
 					try {
 						this.lockObject.wait(executor.maxWait());
@@ -46,10 +53,6 @@ public class SyncExecutorManager extends Thread{
 	
 	public void run() {
 		this.exec();
-	}
-	
-	private void execTestMethods(int level) {
-		
 	}
 
 }

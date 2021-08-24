@@ -12,7 +12,7 @@ public class GeneralTestClass {
         System.out.println("Hello");
     }
 
-    @TestMethod(sync = false)
+    @TestMethod(threadsNum = 1, repeatTime = 10)
     void testPlain() {
         System.out.println("Test plain");
     }
