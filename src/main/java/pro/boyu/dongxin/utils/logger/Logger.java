@@ -10,7 +10,9 @@ public class Logger {
     public static final String ANSI_DEFAULT = "\u001B[39m";
 
     public void debug(String message) {
-        info(message);
+        if (LoggerFactory.debug) {
+            System.out.println(message);
+        }
     }
 
 
@@ -59,7 +61,9 @@ public class Logger {
     private String processMessage(String pattern, FormatType type, Object ...args) {
         if ( FormatType.SLF4J == type) {
             for (Object arg: args) {
-                pattern = pattern.replaceFirst("\\{}", arg.toString());
+                if (null != arg) {
+                    pattern = pattern.replaceFirst("\\{}", arg.toString());
+                }
             }
             return pattern;
         } else if (FormatType.C == type) {

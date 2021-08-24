@@ -1,5 +1,12 @@
 package pro.boyu.dongxin.framework;
 
+import pro.boyu.dongxin.framework.annotations.*;
+import pro.boyu.dongxin.framework.exception.OutTimeLimitException;
+import pro.boyu.dongxin.framework.executor.manager.SyncExecutorManager;
+import pro.boyu.dongxin.framework.infobean.MethodExecutionInfo;
+import pro.boyu.dongxin.utils.logger.Logger;
+import pro.boyu.dongxin.utils.logger.LoggerFactory;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -7,31 +14,22 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.*;
 
-import pro.boyu.dongxin.utils.logger.Logger;
-import pro.boyu.dongxin.utils.logger.LoggerFactory;
-
-import pro.boyu.dongxin.framework.annotations.*;
-import pro.boyu.dongxin.framework.executor.SyncTestCaseExecutor;
-
-import pro.boyu.dongxin.framework.exception.*;
-import pro.boyu.dongxin.framework.executor.manager.SyncTestMethodExecutorManager;
-import pro.boyu.dongxin.framework.infobean.TestMethodInvokeInfo;
-import pro.boyu.dongxin.utils.Subject;
-
 /**
  *
  */
 
 public class OrderedPackageLoader extends AbstractPackageLoader {
 	static final Logger logger = LoggerFactory.getLogger(OrderedPackageLoader.class);
+
+	/*
+		Used when used lock inside a test method, you should use @TestMethod with sync=true instead
+	 */
 	@Deprecated
-	static Object lock = new Object();
+	final static Object lock = new Object();
 	
-	public static Object loggerLockObject=new Object();
-	private Map<Integer, List<SyncTestCaseExecutor>> syncExecutorMap = new HashMap<Integer, List<SyncTestCaseExecutor>>();
-	private Map<Class<?>, Object> testClassInstanceMap = new HashMap<>();
-	private Map<Class<?>, Object> serviceClassInstanceMap = new HashMap<>();
-	private SyncTestMethodExecutorManager syncManager = new SyncTestMethodExecutorManager();
+	public static final Object loggerLockObject=new Object();
+	private final Map<Class<?>, Object> testClassInstanceMap = new HashMap<>();
+	private final Map<Class<?>, Object> serviceClassInstanceMap = new HashMap<>();
 
 	protected OrderedPackageLoader(Class<?> c) {
 		super(c);
@@ -51,7 +49,6 @@ public class OrderedPackageLoader extends AbstractPackageLoader {
 					Constructor<?> constructor = clazz.getConstructor();
 					constructor.setAccessible(true);
 					Object target = constructor.newInstance();
-					// this.processClazz(clazz,target);
 					this.testClassInstanceMap.put(clazz, target);
 				}
 
@@ -64,11 +61,10 @@ public class OrderedPackageLoader extends AbstractPackageLoader {
 			}
 		}
 
-		// executing test class
+		// executing each test class
 		for (Class<?> clazz: testClassInstanceMap.keySet()) {
 			try {
-				this.processTestClazz(clazz, testClassInstanceMap.get(clazz));
-
+				this.processTestClass(clazz, testClassInstanceMap.get(clazz));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -76,7 +72,7 @@ public class OrderedPackageLoader extends AbstractPackageLoader {
 	}
 
 	/*
-	 * description：初始化Service类，当前Service类不能自动注入任何依赖 author：zhangying date:2021/08/13
+	 * description：初始化Service类，当前Service类不能自动注入任何依赖 author：Zhang Ying date:2021/08/13
 	 */
 	private void processService(Class<?> clazz) throws ClassNotFoundException, NoSuchMethodException,
 			InvocationTargetException, IllegalAccessException, InstantiationException {
@@ -99,7 +95,7 @@ public class OrderedPackageLoader extends AbstractPackageLoader {
 	}
 
 	private void processTestInit(Method m, Object target, String className) {
-		logger.info("Test Class {} is initting", className);
+		logger.info("Test Class {} is initiating", className);
 		try {
 			this.injectArguments(m, target);
 		} catch (Exception e) {
@@ -107,43 +103,43 @@ public class OrderedPackageLoader extends AbstractPackageLoader {
 		}
 	}
 
-	protected void processTestClazz(Class<?> clazz, Object target)
+	protected void processTestClass(Class<?> clazz, Object target)
 			throws InvocationTargetException, IllegalAccessException {
-		SyncTestMethodExecutorManager syncManager = new SyncTestMethodExecutorManager();
-		Map<Integer, List<Method>> testMethodsMap = new HashMap<>();
-		TestClassManager testClazzExecutor = new TestClassManager(target);
+		SyncExecutorManager syncManager = null;
+
 		// 扫描TestClazz下所有方法，首先处理带有TestInit注解的初始化工作，支持注入注册过的Service
 		for (Method method : target.getClass().getDeclaredMethods()) {
 			if (method.isAnnotationPresent(TestInit.class)) {
 				method.setAccessible(true);
-				method.invoke(target, dependencyDetection(method, target));
+				method.invoke(target, dependencyDetection(method));
 			}
 			if (method.isAnnotationPresent(TestMethod.class)) {
+				TestMethod testMethod = method.getAnnotation(TestMethod.class);
+				if (testMethod.sync()) {
+					if (null == syncManager) {
+						syncManager = new SyncExecutorManager();
+					}
+					processSyncTestMethod(clazz, target, method, testMethod, syncManager);
+				} else {
+					// TODO impl async manager
+				}
 
-				processSyncTestMethod(target, method, clazz);
 			}
 		}
 	}
 
-	protected void processSyncTestMethod(Object target, Method m, Class<?> clazz) throws InvocationTargetException, IllegalAccessException {
-		for (Annotation annotation : m.getAnnotations()) {
-			if (annotation instanceof TestMethod) {
-				// retrieve info
-				TestMethod testMethod = (TestMethod) annotation;
-				TestMethodInvokeInfo info = new TestMethodInvokeInfo(target, m, testMethod, dependencyDetection(m, target));
-				syncManager.addMethod(info);
-				syncManager.exec();
-			}
-		}
+	protected void processSyncTestMethod(Class<?> clazz, Object target, Method m, TestMethod testMethod, SyncExecutorManager syncManager) {
+		MethodExecutionInfo info = new MethodExecutionInfo(clazz, target, m, testMethod, dependencyDetection(m));
+		syncManager.addMethod(info);
+		syncManager.exec();
 	}
 
-	protected Object[] dependencyDetection(Method m, Object target)
-			throws InvocationTargetException, IllegalAccessException {
+	protected Object[] dependencyDetection(Method m) {
 		List<Object> objects = new LinkedList<>();
 		for (Parameter parameter : m.getParameters()) {
 			Class<?> clazz = parameter.getClass();
 			objects.add(
-					this.serviceClassInstanceMap.containsKey(clazz) ? this.serviceClassInstanceMap.get(clazz) : null);
+					this.serviceClassInstanceMap.getOrDefault(clazz, null));
 		}
 		return objects.toArray();
 	}
@@ -229,21 +225,5 @@ public class OrderedPackageLoader extends AbstractPackageLoader {
 		Set<Class<?>> classes = frameworkApplication.scanPackage();
 		frameworkApplication.loadIntoIoc(classes);
 		frameworkApplication.processIocContainer();
-	}
-}
-
-class Test {
-	private Object o;
-
-	@TestInit
-	void init(Object o) {
-		o = o;
-	}
-
-	@TestMethod
-	void test1(Object o, Subject<String> a) {
-		a.updateData("xx");
-
-
 	}
 }

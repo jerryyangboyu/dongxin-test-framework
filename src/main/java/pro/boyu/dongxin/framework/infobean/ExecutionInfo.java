@@ -2,10 +2,10 @@ package pro.boyu.dongxin.framework.infobean;
 
 import pro.boyu.dongxin.framework.constenum.*;
 
-public class TestExecuteInfo {
+public class ExecutionInfo {
     private long time;
     private TestCaseState state;
-    private String message;
+    private String message = "成功";
 	public long getTime() {
 		return time;
 	}
@@ -25,12 +25,14 @@ public class TestExecuteInfo {
 		this.message = message;
 	}
 	
-	public TestExecuteInfo() {
-		
+	public ExecutionInfo() { }
+
+	public ExecutionInfo(long time, TestCaseState state) {
+		this.time=time;
+		this.state=state;
 	}
 	
-	public TestExecuteInfo(long time,TestCaseState state,String messageString) {
-		// TODO Auto-generated constructor stub
+	public ExecutionInfo(long time, TestCaseState state, String messageString) {
 		this.time=time;
 		this.state=state;
 		this.message=messageString;

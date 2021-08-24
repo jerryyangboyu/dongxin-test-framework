@@ -1,14 +1,10 @@
 package pro.boyu.dongxin.utils.logger;
 
 import com.itextpdf.text.DocumentException;
-import pro.boyu.dongxin.framework.infobean.TestExecuteInfo;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 public interface IReporter {
 //    public void addRecord(Class<?> clazz, Method method, boolean success, String message, long time, TimeUnit unit);
