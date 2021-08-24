@@ -1,6 +1,11 @@
 package pro.boyu.dongxin.utils.logger;
 
+import pro.boyu.dongxin.framework.constenum.TestCaseState;
+import pro.boyu.dongxin.framework.infobean.ExecutionInfo;
+
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Logger {
     public enum FormatType {C, PYTHON, SLF4J};
@@ -8,10 +13,34 @@ public class Logger {
     public static final String ANSI_GREEN = "\u001B[32m";
     public static final String ANSI_YELLOW = "\u001B[33m";
     public static final String ANSI_DEFAULT = "\u001B[39m";
+    private final String id;
+
+    public Logger(String name) {
+        this.id = name;
+    }
+
+    public String getId() {return this.id;}
+
+    List<OutputInfoBean> info = new ArrayList<>();
 
     public void debug(String message) {
         if (LoggerFactory.debug) {
             System.out.println(message);
+        }
+    }
+
+    public void exportInfo(OutputInfoBean info) {
+        this.info.add(info);
+        for (OutputInfoBean bean: this.info) {
+            for (ExecutionInfo exec: bean.getExecutionInfos()) {
+                String message = TestCaseInfoUtil.executeExceptionInfoUtil(bean.getClassName(), bean.getMethodName(), (int) exec.getTime(), exec.getMessage());
+                TestCaseState state = exec.getState();
+                if (state == TestCaseState.SUCCESSFIN) {
+                    info(message);
+                } else if (state == TestCaseState.ERROR || state == TestCaseState.ERRORFIN) {
+                    error(message);
+                }
+            }
         }
     }
 
@@ -73,6 +102,10 @@ public class Logger {
         } else {
             return pattern;
         }
+    }
+
+    public List<OutputInfoBean> getInfo() {
+        return this.info;
     }
 
 }

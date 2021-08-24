@@ -6,5 +6,6 @@ public class TestApplication {
     public static void run(Class<?> c) {
         LoggerFactory.debug = true;
         OrderedPackageLoader.run(c);
+        System.out.println(LoggerFactory.getMap());;
     }
 }

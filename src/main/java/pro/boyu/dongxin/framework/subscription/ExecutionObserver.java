@@ -12,6 +12,7 @@ import pro.boyu.dongxin.framework.OrderedPackageLoader;
 import pro.boyu.dongxin.framework.constenum.TestCaseState;
 import pro.boyu.dongxin.framework.infobean.ExecutionInfo;
 import pro.boyu.dongxin.utils.jucservice.Unsubscribtion;
+import pro.boyu.dongxin.utils.logger.OutputInfoBean;
 
 import static pro.boyu.dongxin.utils.logger.TestCaseInfoUtil.getLocalDate;
 
@@ -66,9 +67,8 @@ public class ExecutionObserver implements Observer<ExecutionInfo> {
 
     public void exportInfos() {
         synchronized (OrderedPackageLoader.loggerLockObject) {
-            this.runningInfo.forEach(ri -> {
-                logger.info("testcase {} log in {} ,message : {}", this.methodName, getLocalDate(ri.getTime()), ri.getMessage());
-            });
+            OutputInfoBean bean = new OutputInfoBean(className, methodName, runningInfo);
+            logger.exportInfo(bean);
         }
     }
 

@@ -33,7 +33,7 @@ public class SimpleExecutor extends Executor {
 				this.subject.completedSuccess();
 				
 			} catch (Exception e) {
-				this.subject.updateData(new ExecutionInfo(System.currentTimeMillis(), TestCaseState.RUNNING, TestCaseInfoUtil.executeExceptionInfoUtil(method.getName(), time, e.getMessage())));
+				this.subject.updateData(new ExecutionInfo(System.currentTimeMillis(), TestCaseState.RUNNING, TestCaseInfoUtil.executeExceptionInfoUtil(testClass.getName(), method.getName(), time, e.getMessage())));
 				this.subject.completedError(e);
 			}
 			finally{
