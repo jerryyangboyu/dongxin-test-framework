@@ -21,7 +21,6 @@ public class Reporter {
 
     }
 
-
     //path 输出的地址 count 返回的测试样例的总数  返回一个hashMap 根据方法名找到对应的信息
     public void exportPdf() throws IOException, DocumentException {
         PdfReportWriter writer = new PdfReportWriter(path, map);
