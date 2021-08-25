@@ -1,5 +1,6 @@
 package pro.boyu.dongxin.utils.logger;
 
+import pro.boyu.dongxin.framework.TestApplication;
 import pro.boyu.dongxin.framework.constenum.TestCaseState;
 import pro.boyu.dongxin.framework.infobean.ExecutionInfo;
 
@@ -46,37 +47,90 @@ public class HtmlReporterWriter {
 //输入HTML文件内容
         sb.append("<html><head>");
         sb.append("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">");
+        sb.append("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">");
+        sb.append("<style type=\"text/css\">");
+        sb.append("html {\n" +
+                "    font-family: sans-serif;\n" +
+                "    -ms-text-size-adjust: 100%;\n" +
+                "    -webkit-text-size-adjust: 100%;\n" +
+                "}");
+        sb.append("body {\n" +
+                "    margin: 10px;\n" +
+                "}");
+        sb.append("table {\n" +
+                "    border-collapse: collapse;\n" +
+                "    border-spacing: 0;\n" +
+                "}");
+        sb.append("td,th {\n" +
+                "    padding: 0;\n" +
+                "}");
+        sb.append(".pure-table {\n" +
+                "    border-collapse: collapse;\n" +
+                "    border-spacing: 0;\n" +
+                "    empty-cells: show;\n" +
+                "    border: 1px solid #cbcbcb;\n" +
+                "}");
+        sb.append(".pure-table caption {\n" +
+                "    color: #000;\n" +
+                "    font: italic 85%/1 arial,sans-serif;\n" +
+                "    padding: 1em 0;\n" +
+                "    text-align: center;\n" +
+                "}");
+        sb.append(".pure-table td,.pure-table th {\n" +
+                "    border-left: 1px solid #cbcbcb;\n" +
+                "    border-width: 0 0 0 1px;\n" +
+                "    font-size: inherit;\n" +
+                "    margin: 0;\n" +
+                "    overflow: visible;\n" +
+                "    padding: .5em 1em;\n" +
+                "}");
+        sb.append(".pure-table thead {\n" +
+                "    background-color: #e0e0e0;\n" +
+                "    color: #000;\n" +
+                "    text-align: left;\n" +
+                "    vertical-align: bottom;\n" +
+                "}");
+        sb.append(".pure-table td {\n" +
+                "    background-color: transparent;\n" +
+                "}");
+        sb.append(".pure-table-bordered td {\n" +
+                "    border-bottom: 1px solid #cbcbcb;\n" +
+                "}");
+        sb.append(".pure-table-bordered tbody>tr:last-child>td {\n" +
+                "    border-bottom-width: 0;\n" +
+                "}");
+        sb.append("</style>");
         sb.append("<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" align=\"center\">");
         sb.append("<tr>").append("<td align=\"center\" class=\"biaoti\" height=\"60\">").append(title).append("</td>").append("</tr>");
         sb.append("</td>");
         sb.append("</head>");
         sb.append("<body>");
-        sb.append("<table width=\"75%\" border=\"0\" cellspacing=\"1\" cellpadding=\"1\" bgcolor=\"#cccccc\" class=\"tabtop13\" align=\"center\">");
+        sb.append("<table class=\"pure-table pure-table-bordered\">");
         sb.append("<tr>");
-        sb.append("<td colspan=\"1\" class=\"btbg font-center titfont\" rowspan=\"2\">").append("TestClass").append("</td>");
-        sb.append("<td colspan=\"1\" class=\"btbg font-center titfont\" rowspan=\"2\">").append("TestMethod").append("</td>");
-        sb.append("<td colspan=\"1\" class=\"btbg font-center titfont\" rowspan=\"2\">").append("Time(ms)").append("</td>");
-        sb.append("<td colspan=\"1\" class=\"btbg font-center titfont\" rowspan=\"2\">").append("State").append("</td>");
-        sb.append("<td colspan=\"1\" class=\"btbg font-center titfont\" rowspan=\"2\">").append("Message").append("</td>");
-        sb.append("<td colspan=\"1\" class=\"btbg font-center titfont\" rowspan=\"2\">").append("Included Groups").append("</td>");
-        sb.append("<td colspan=\"1\" class=\"btbg font-center titfont\" rowspan=\"2\">").append("Excluded Groups").append("</td>");
+        sb.append("<td>").append("TestClass").append("</td>");
+        sb.append("<td>").append("TestMethod").append("</td>");
+        sb.append("<td>").append("Time(ms)").append("</td>");
+        sb.append("<td>").append("State").append("</td>");
+        sb.append("<td>").append("Message").append("</td>");
+        sb.append("<td>").append("Included Groups").append("</td>");
+        sb.append("<td>").append("Excluded Groups").append("</td>");
         sb.append("</table>");
     }
     public void insert(){
         for(String className: map.keySet()) {
             List<OutputInfoBean> outputInfoBeans = map.get(className);
-            sb.append("<table width=\"75%\" border=\"0\" cellspacing=\"1\" cellpadding=\"1\" bgcolor=\"#cccccc\" class=\"tabtop13\" align=\"center\">");
+            sb.append("<table >");
             sb.append("<tr>");
-            sb.append("<td colspan=\"1\" class=\"btbg font-center titfont\"rowspan=\"2\">").append(String.valueOf(outputInfoBeans.get(0).getClassName())).append("</td>");
-            sb.append("<td colspan=\"1\" class=\"btbg font-center titfont\"rowspan=\"2\">").append(String.valueOf(outputInfoBeans.get(0).getMethodName())).append("</td>");
+            sb.append("<td>").append(String.valueOf(outputInfoBeans.get(0).getClassName())).append("</td>");
+            sb.append("<td>").append(String.valueOf(outputInfoBeans.get(0).getMethodName())).append("</td>");
             for (ExecutionInfo executionInfo : outputInfoBeans.get(0).getExecutionInfos()) {
                 long time = System.currentTimeMillis() - executionInfo.getTime();
-                sb.append("<td colspan=\"1\" class=\"btbg font-center titfont\"rowspan=\"2\">").append(String.valueOf(time)).append("</td>");
-                sb.append("<td colspan=\"1\" class=\"btbg font-center titfont\"rowspan=\"2\">").append(String.valueOf(executionInfo.getState())).append("</td>");
-                sb.append("<td colspan=\"1\" class=\"btbg font-center titfont\"rowspan=\"2\">").append(executionInfo.getMessage()).append("</td>");
+                sb.append("<td>").append(String.valueOf(time)).append("</td>");
+                sb.append("<td>").append(String.valueOf(executionInfo.getState())).append("</td>");
+                sb.append("<td>").append(executionInfo.getMessage()).append("</td>");
             }
-            sb.append("<td colspan=\"1\" class=\"btbg font-center titfont\"rowspan=\"2\">").append(String.valueOf(outputInfoBeans.get(0).getIncludeGroups())).append("</td>");
-            sb.append("<td colspan=\"1\" class=\"btbg font-center titfont\"rowspan=\"2\">").append(String.valueOf(outputInfoBeans.get(0).getExcludeGroups())).append("</td>");
+            sb.append("<td>").append(String.valueOf(outputInfoBeans.get(0).getIncludeGroups())).append("</td>");
+            sb.append("<td>").append(String.valueOf(outputInfoBeans.get(0).getExcludeGroups())).append("</td>");
             sb.append("</table>");
         }
     }
@@ -96,14 +150,4 @@ public class HtmlReporterWriter {
         end();
     }
 
-    public static void main(String[] args) {
-        Map<String, List<OutputInfoBean>> beans = new HashMap<>();
-        List<OutputInfoBean> list1 = new ArrayList<>();
-        List<ExecutionInfo> execlist = new ArrayList<>();
-        execlist.add(new ExecutionInfo(System.currentTimeMillis(), TestCaseState.START));
-        list1.add(new OutputInfoBean("TestClass", "TestMethod", execlist));
-        beans.put("Test",list1);
-        HtmlReporterWriter hm = new HtmlReporterWriter("C:\\b.html",beans,"测试报告");
-        hm.createHtml();
-    }
 }

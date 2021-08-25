@@ -31,6 +31,6 @@ public class GeneralTestClass {
 
     @TestMethod
     void testMessage(@CaseSubject ExecutorSubject subject) {
-        subject.updateData(new ExecutionInfo(System.currentTimeMillis(), TestCaseState.RUNNING, "Good"));
+        subject.updateData(new ExecutionInfo(System.currentTimeMillis(), TestCaseState.ERROR, "Good"));
     }
 }
