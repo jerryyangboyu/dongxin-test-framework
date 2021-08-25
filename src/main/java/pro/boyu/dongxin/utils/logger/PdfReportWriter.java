@@ -2,6 +2,8 @@ package pro.boyu.dongxin.utils.logger;
 
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.*;
+import pro.boyu.dongxin.framework.constenum.TestCaseState;
+import pro.boyu.dongxin.framework.infobean.ExecutionInfo;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -52,19 +54,19 @@ public class PdfReportWriter {
         reportTable.setWidths(widths);
         //单元格
         PdfPCell[] cells1 = new PdfPCell[columns];
-        cells1[0] = new PdfPCell(new Paragraph("Test"));//单元格内容
+        cells1[0] = new PdfPCell(new Paragraph("Test Class"));//单元格内容
         cells1[0].setHorizontalAlignment(Element.ALIGN_CENTER);//水平居中
         cells1[0].setVerticalAlignment(Element.ALIGN_MIDDLE);
-        cells1[1] = new PdfPCell(new Paragraph("Passed"));
+        cells1[1] = new PdfPCell(new Paragraph("Test Method"));
         cells1[1].setHorizontalAlignment(Element.ALIGN_CENTER);//水平居中
         cells1[1].setVerticalAlignment(Element.ALIGN_MIDDLE);
-        cells1[2] = new PdfPCell(new Paragraph("Skipped"));
+        cells1[2] = new PdfPCell(new Paragraph("Time"));
         cells1[2].setHorizontalAlignment(Element.ALIGN_CENTER);//水平居中
         cells1[2].setVerticalAlignment(Element.ALIGN_MIDDLE);
-        cells1[3] = new PdfPCell(new Paragraph("Failed"));//单元格内容
+        cells1[3] = new PdfPCell(new Paragraph("State"));//单元格内容
         cells1[3].setHorizontalAlignment(Element.ALIGN_CENTER);//水平居中
         cells1[3].setVerticalAlignment(Element.ALIGN_MIDDLE);
-        cells1[4] = new PdfPCell(new Paragraph("Time(ms)"));//单元格内容
+        cells1[4] = new PdfPCell(new Paragraph("Message"));//单元格内容
         cells1[4].setHorizontalAlignment(Element.ALIGN_CENTER);//水平居中
         cells1[4].setVerticalAlignment(Element.ALIGN_MIDDLE);
         cells1[5] = new PdfPCell(new Paragraph("Include Groups"));//单元格内容
@@ -78,44 +80,60 @@ public class PdfReportWriter {
         listRow.add(titleRow);
     }
 
-    private void insertRows() throws DocumentException {
+    private void insertRows() throws DocumentException, IOException {
+        BaseFont bfChinese = BaseFont.createFont("STSong-Light","UniGB-UCS2-H",BaseFont.NOT_EMBEDDED);
+        Font blueFont = new Font(bfChinese);
+        blueFont.setColor(BaseColor.GREEN);
         ArrayList<PdfPRow> rows = reportTable.getRows();
-//        List<PdfPCell> cells = new ArrayList<>();
-//        for (String className: map.keySet()) {
-//            List<OutputInfoBean> outputInfoBeans = map.get(className);
-//            Object[] outPut = outputInfoBeans.toArray();
-//            for (int i = 0; i < 7; i++) {
-//                cells.add(new PdfPCell(new Paragraph()));
-//            }
-//            PdfPRow newRow = new PdfPRow(cells.toArray(new PdfPCell[0]));
-//            rows.add(newRow);
-//        }
-        PdfPCell[] cells = new PdfPCell[columns];
+        List<PdfPCell> cells = new ArrayList<>();
         for (String className : map.keySet()) {
             List<OutputInfoBean> outputInfoBeans = map.get(className);
-//            Object[] outPut = outputInfoBeans.toArray();
-            cells[0] = (new PdfPCell(new Paragraph(outputInfoBeans.get(0).getClassName())));
-            cells[0].setHorizontalAlignment(Element.ALIGN_CENTER);//水平居
-            cells[0].setVerticalAlignment(Element.ALIGN_MIDDLE);
-            cells[1] = (new PdfPCell(new Paragraph(outputInfoBeans.get(0).getMethodName())));
-            cells[1].setHorizontalAlignment(Element.ALIGN_CENTER);//水平居中
-            cells[1].setVerticalAlignment(Element.ALIGN_MIDDLE);
-//            cells[2] = new PdfPCell(new Paragraph(String.valueOf(outputInfoBeans.get(0).isSuccess())));
-            cells[2].setHorizontalAlignment(Element.ALIGN_CENTER);//水平居中
-            cells[2].setVerticalAlignment(Element.ALIGN_MIDDLE);
-//            cells[3] = (new PdfPCell(new Paragraph(String.valueOf(outputInfoBeans.get(0).getTimeUsage()))));
-//            cells[3].setHorizontalAlignment(Element.ALIGN_CENTER);//水平居中
-            cells[3].setVerticalAlignment(Element.ALIGN_MIDDLE);
-//            cells[4] = (new PdfPCell(new Paragraph(outputInfoBeans.get(0).getMessage())));
-//            cells[4].setHorizontalAlignment(Element.ALIGN_CENTER);//水平居中
-            cells[4].setVerticalAlignment(Element.ALIGN_MIDDLE);
-//            cells[5] = (new PdfPCell(new Paragraph(String.valueOf(outputInfoBeans.get(0).getIncludeGroups()))));
-//            cells[5].setHorizontalAlignment(Element.ALIGN_CENTER);//水平居中
-            cells[5].setVerticalAlignment(Element.ALIGN_MIDDLE);
-//            cells[6] = (new PdfPCell(new Paragraph(String.valueOf(outputInfoBeans.get(0).getExcludeGroups()))));
-            cells[6].setHorizontalAlignment(Element.ALIGN_CENTER);//水平居中
-            cells[6].setVerticalAlignment(Element.ALIGN_MIDDLE);
-            PdfPRow newRow = new PdfPRow(cells);
+            Object[] outPut = outputInfoBeans.toArray();
+            for (int i = 0; i < 7; i++) {
+                cells.add(new PdfPCell(new Paragraph()));
+            }
+            PdfPRow newRow = new PdfPRow(cells.toArray(new PdfPCell[0]));
+            rows.add(newRow);
+        }
+        PdfPCell[] cells1 = new PdfPCell[columns];
+        for (String className : map.keySet()) {
+            List<OutputInfoBean> outputInfoBeans = map.get(className);
+            Object[] outPut = outputInfoBeans.toArray();
+            cells1[0] = (new PdfPCell(new Paragraph(outputInfoBeans.get(0).getClassName())));
+            cells1[0].setHorizontalAlignment(Element.ALIGN_CENTER);//水平居
+            cells1[0].setVerticalAlignment(Element.ALIGN_MIDDLE);
+            cells1[1] = (new PdfPCell(new Paragraph(outputInfoBeans.get(0).getMethodName())));
+            cells1[1].setHorizontalAlignment(Element.ALIGN_CENTER);//水平居中
+            cells1[1].setVerticalAlignment(Element.ALIGN_MIDDLE);
+            for (ExecutionInfo executionInfo : outputInfoBeans.get(0).getExecutionInfos()) {
+                cells1[2] = new PdfPCell(new Paragraph(String.valueOf(System.currentTimeMillis() - executionInfo.getTime())));
+                cells1[2].setHorizontalAlignment(Element.ALIGN_CENTER);//水平居中
+                cells1[2].setVerticalAlignment(Element.ALIGN_MIDDLE);
+                cells1[3] = (new PdfPCell(new Paragraph(String.valueOf(executionInfo.getState()))));
+                cells1[3].setHorizontalAlignment(Element.ALIGN_CENTER);//水平居中
+                cells1[3].setVerticalAlignment(Element.ALIGN_MIDDLE);
+                cells1[4] = (new PdfPCell(new Paragraph(String.valueOf(executionInfo.getMessage()),blueFont)));
+                cells1[4].setHorizontalAlignment(Element.ALIGN_CENTER);//水平居中
+                cells1[4].setVerticalAlignment(Element.ALIGN_MIDDLE);
+            }
+            if (outputInfoBeans.get(0).getIncludeGroups()==null){
+                cells1[5] = (new PdfPCell(new Paragraph("")));
+                cells1[5].setHorizontalAlignment(Element.ALIGN_CENTER);//水平居中
+                cells1[5].setVerticalAlignment(Element.ALIGN_MIDDLE);
+                cells1[6] = (new PdfPCell(new Paragraph("")));
+                cells1[6].setHorizontalAlignment(Element.ALIGN_CENTER);//水平居中
+                cells1[6].setVerticalAlignment(Element.ALIGN_MIDDLE);
+            }
+            else {
+                cells1[5] = (new PdfPCell(new Paragraph(String.valueOf(outputInfoBeans.get(0).getIncludeGroups()))));
+                cells1[5].setHorizontalAlignment(Element.ALIGN_CENTER);//水平居中
+                cells1[5].setVerticalAlignment(Element.ALIGN_MIDDLE);
+                cells1[6] = (new PdfPCell(new Paragraph(String.valueOf(outputInfoBeans.get(0).getExcludeGroups()))));
+                cells1[6].setHorizontalAlignment(Element.ALIGN_CENTER);//水平居中
+                cells1[6].setVerticalAlignment(Element.ALIGN_MIDDLE);
+            }
+
+            PdfPRow newRow = new PdfPRow(cells1);
             rows.add(newRow);
         }
     }
@@ -137,10 +155,11 @@ public class PdfReportWriter {
 
     public static void main(String[] args) throws DocumentException, IOException {
         Map<String, List<OutputInfoBean>> beans = new HashMap<>();
-        List<OutputInfoBean> beans1 = new ArrayList<>();
-//        beans1.add(new OutputInfoBean("class1", "method1", true, 3L, "good"));
-        beans.put("testClass1", beans1);
-        beans.put("adad", beans1);
+        List<OutputInfoBean> list1 = new ArrayList<>();
+        List<ExecutionInfo> execlist = new ArrayList<>();
+        execlist.add(new ExecutionInfo(System.currentTimeMillis(), TestCaseState.START));
+        list1.add(new OutputInfoBean("TestClass", "TestMethod", execlist));
+        beans.put("TestClass", list1);
         PdfReportWriter writer = new PdfReportWriter("C:/a.pdf", "Test", beans);
         writer.createPdf();
     }

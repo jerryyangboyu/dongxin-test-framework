@@ -9,7 +9,8 @@ public class OutputInfoBean {
     String className;
     String methodName;
     List<ExecutionInfo> executionInfos;
-
+    String IncludeGroups;
+    String ExcludeGroups;
     public String getClassName() {
         return className;
     }
@@ -28,6 +29,22 @@ public class OutputInfoBean {
 
     public List<ExecutionInfo> getExecutionInfos() {
         return executionInfos;
+    }
+
+    public String getIncludeGroups() {
+        return IncludeGroups;
+    }
+
+    public void setIncludeGroups(String includeGroups) {
+        IncludeGroups = includeGroups;
+    }
+
+    public String getExcludeGroups() {
+        return ExcludeGroups;
+    }
+
+    public void setExcludeGroups(String excludeGroups) {
+        ExcludeGroups = excludeGroups;
     }
 
     public OutputInfoBean(String className, String methodName, List<ExecutionInfo> executionInfos) {

@@ -24,8 +24,10 @@ public class ExecutionInfo {
 	public void setMessage(String message) {
 		this.message = message;
 	}
-	
-	public ExecutionInfo() { }
+
+	public ExecutionInfo() {
+
+	}
 
 	public ExecutionInfo(long time, TestCaseState state) {
 		this.time=time;
@@ -37,5 +39,13 @@ public class ExecutionInfo {
 		this.state=state;
 		this.message=messageString;
 	}
-    
+
+	@Override
+	public String toString() {
+		return "ExecutionInfo{" +
+				"time=" + time +
+				", state=" + state +
+				", message='" + message + '\'' +
+				'}';
+	}
 }
