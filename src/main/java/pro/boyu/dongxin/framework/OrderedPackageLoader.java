@@ -4,6 +4,7 @@ import pro.boyu.dongxin.framework.annotations.*;
 import pro.boyu.dongxin.framework.exception.OutTimeLimitException;
 import pro.boyu.dongxin.framework.executor.manager.SyncExecutorManager;
 import pro.boyu.dongxin.framework.infobean.MethodExecutionInfo;
+import pro.boyu.dongxin.framework.subscription.ExecutorSubject;
 import pro.boyu.dongxin.utils.logger.Logger;
 import pro.boyu.dongxin.utils.logger.LoggerFactory;
 
@@ -123,7 +124,7 @@ public class OrderedPackageLoader extends AbstractPackageLoader {
 		for (Parameter parameter : m.getParameters()) {
 			Class<?> clazz = parameter.getType();
 			Object bean = this.serviceClassInstanceMap.get(clazz);
-			if (null == bean) {
+			if (null == bean && clazz != ExecutorSubject.class) {
 				throw new Exception("Cannot initiate bean with type: " + clazz.getName());
 			}
 			objects.add(bean);

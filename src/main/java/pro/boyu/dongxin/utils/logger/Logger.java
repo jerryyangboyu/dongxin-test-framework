@@ -22,8 +22,6 @@ public class Logger {
 
     public String getId() {return this.id;}
 
-    List<OutputInfoBean> info = new ArrayList<>();
-
     public void debug(String message) {
         if (LoggerFactory.debug) {
             System.out.println(message);
@@ -31,18 +29,14 @@ public class Logger {
     }
 
     public void exportInfo(OutputInfoBean info) {
-        Map<String, List<OutputInfoBean>> map = LoggerFactory.getMap();
-        this.info.add(info);
-        map.put(id, this.info);
-        for (OutputInfoBean bean: this.info) {
-            for (ExecutionInfo exec: bean.getExecutionInfos()) {
-                String message = TestCaseInfoUtil.executeExceptionInfoUtil(bean.getClassName(), bean.getMethodName(), (int) exec.getTime(), exec.getMessage());
-                TestCaseState state = exec.getState();
-                if (state == TestCaseState.SUCCESSFIN) {
-                    info(message);
-                } else if (state == TestCaseState.ERROR || state == TestCaseState.ERRORFIN) {
-                    error(message);
-                }
+        LogCache.getCache().appendInfo(id, info);
+        for (ExecutionInfo exec: info.getExecutionInfos()) {
+            String message = TestCaseInfoUtil.executeExceptionInfoUtil(info.getClassName(), info.getMethodName(), (int) exec.getTime(), exec.getMessage());
+            TestCaseState state = exec.getState();
+            if (state == TestCaseState.SUCCESSFIN) {
+                info(message);
+            } else if (state == TestCaseState.ERROR || state == TestCaseState.ERRORFIN) {
+                error(message);
             }
         }
     }
@@ -108,7 +102,7 @@ public class Logger {
     }
 
     public List<OutputInfoBean> getInfo() {
-        return this.info;
+        return LoggerFactory.getMap().get(id);
     }
 
 }

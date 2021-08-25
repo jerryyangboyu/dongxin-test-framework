@@ -8,24 +8,16 @@ import java.util.Map;
 public class LoggerFactory {
     public static boolean debug = false;
 
-    private static final List<Logger> loggers = new ArrayList<>();
-    private static final Map<String, List<OutputInfoBean>> map = new HashMap<>();
-
     public static Logger getLogger(Class<?> clazz) {
         return getLogger(clazz.getName());
     }
 
     public static Logger getLogger(String name) {
-        Logger logger = new Logger(name);
-        loggers.add(logger);
-        return logger;
+        return new Logger(name);
     }
 
     public static Map<String, List<OutputInfoBean>> getMap() {
-        for (Logger logger: loggers) {
-            map.put(logger.getId(), logger.getInfo());
-        }
-        return map;
+        return LogCache.getCache().exportMap();
     }
 
 }
