@@ -14,12 +14,12 @@ public class GeneralTestClass {
     void testPlain() {
     }
 
-//    @TestMethod
+    @TestMethod
     void testBean(String beanMessage) {
         System.out.println(beanMessage);
     }
 
-//    @TestMethod
+    @TestMethod
     void testInstanceBean(TestService service) {
         System.out.println(service.getClient());
     }
