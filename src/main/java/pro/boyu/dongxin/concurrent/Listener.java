@@ -34,6 +34,7 @@ class Listener extends RepeatedThread implements Subscriber {
             this.cyclicBarrier.await();  // wait for all threads to init and exec
             this.countDownLatch.await(); // wait for all threads to finish exec
             logger.debug("Thread has been finished");
+            subject.completedSuccess();
         } catch (InterruptedException | BrokenBarrierException e1) {
             logger.error(e1.getMessage());
         }

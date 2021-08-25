@@ -1,8 +1,11 @@
 package pro.boyu.dongxin.concurrent;
 
+import pro.boyu.dongxin.framework.constenum.TestCaseState;
 import pro.boyu.dongxin.framework.exception.OutTimeLimitException;
 import pro.boyu.dongxin.framework.executor.Executor;
+import pro.boyu.dongxin.framework.infobean.ExecutionInfo;
 import pro.boyu.dongxin.framework.infobean.MethodExecutionInfo;
+import pro.boyu.dongxin.framework.subscription.ExecutionObserver;
 import pro.boyu.dongxin.utils.logger.Logger;
 import pro.boyu.dongxin.utils.logger.LoggerFactory;
 
@@ -20,29 +23,38 @@ public class ParallelExecutors extends Executor {
     public static CountDownLatch listenerInitial = new CountDownLatch(1);
     private static final Logger logger = LoggerFactory.getLogger(ParallelExecutors.class);
     MethodExecutionInfo info;
+    final Object lock;
 
-    public ParallelExecutors(MethodExecutionInfo info) {
+    public ParallelExecutors(MethodExecutionInfo info, Object lock) {
         super(info);
         this.info = info;
+        this.lock = lock;
     }
 
     @Override
     public void run() {
-        exec();
+        synchronized (lock) {
+            exec();
+            lock.notify();
+        }
     }
 
     public void exec() {
+
         TimeUnit timeUnit = info.getTimeUnit();
         int expireTime = info.getTestMethod().maxTime();
         int parallelism = info.getTestMethod().threadsNum();
 
+        subject.updateData(new ExecutionInfo(System.currentTimeMillis(), TestCaseState.START));
+
         JUCManager jucManager = new JUCManager();
+        CountDownLatch countDownLatch=new CountDownLatch(parallelism);
         for (int i = 0; i < parallelism; i++) {
             jucManager.register(new RepeatedThread(info));
         }
         new Listener(jucManager, info);
 
-        // scheduled task to terminate all running process
+         //scheduled task to terminate all running process
         ScheduledExecutorService killerService = Executors.newSingleThreadScheduledExecutor();
         killerService.schedule(() -> {
             boolean error = false;
@@ -54,11 +66,11 @@ public class ParallelExecutors extends Executor {
             }
             if (error) {
                 subject.completedError(new OutTimeLimitException(expireTime));
-            } else {
-                subject.completedSuccess();
             }
             killerService.shutdown();
         }, expireTime, timeUnit);
+
+        subject.completedSuccess();
 
         // init listener initial again
         listenerInitial =  new CountDownLatch(1);

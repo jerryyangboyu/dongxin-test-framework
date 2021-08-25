@@ -1,8 +1,6 @@
 package pro.boyu.test;
 
-import pro.boyu.dongxin.framework.annotations.InitMethod;
 import pro.boyu.dongxin.framework.annotations.TestClass;
-import pro.boyu.dongxin.framework.annotations.TestInit;
 import pro.boyu.dongxin.framework.annotations.TestMethod;
 
 @TestClass
@@ -12,8 +10,17 @@ public class GeneralTestClass {
         System.out.println("Hello");
     }
 
-    @TestMethod(threadsNum = 10, repeatTime = 999999999, maxTime = 10000)
+    @TestMethod(threadsNum = 10, repeatTime = 1, maxTime = 3)
     void testPlain() {
-        System.out.println("Test plain");
+    }
+
+//    @TestMethod
+    void testBean(String beanMessage) {
+        System.out.println(beanMessage);
+    }
+
+//    @TestMethod
+    void testInstanceBean(TestService service) {
+        System.out.println(service.getClient());
     }
 }

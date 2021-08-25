@@ -42,7 +42,6 @@ public class OrderedPackageLoader extends AbstractPackageLoader {
 		for (String key : iocContainer.keySet()) {
 			Class<?> clazz = iocContainer.get(key);
 			try {
-				clazz = Class.forName(key);
 				if (clazz.isAnnotationPresent(Service.class)) {
 					processService(clazz);
 				} else if (clazz.isAnnotationPresent(TestClass.class)) {
@@ -51,13 +50,9 @@ public class OrderedPackageLoader extends AbstractPackageLoader {
 					Object target = constructor.newInstance();
 					this.testClassInstanceMap.put(clazz, target);
 				}
-
-			} catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | IllegalAccessException
-					| InstantiationException e) {
-				logger.error("program exit because of " + e.getMessage());
+			} catch (Exception e) {
+				e.printStackTrace();
 				System.exit(0);
-			} catch (Exception e1) {
-				logger.error(e1.getMessage());
 			}
 		}
 
@@ -67,6 +62,7 @@ public class OrderedPackageLoader extends AbstractPackageLoader {
 				this.processTestClass(clazz, testClassInstanceMap.get(clazz));
 			} catch (Exception e) {
 				e.printStackTrace();
+				System.exit(0);
 			}
 		}
 	}
@@ -74,39 +70,34 @@ public class OrderedPackageLoader extends AbstractPackageLoader {
 	/*
 	 * description：初始化Service类，当前Service类不能自动注入任何依赖 author：Zhang Ying date:2021/08/13
 	 */
-	private void processService(Class<?> clazz) throws ClassNotFoundException, NoSuchMethodException,
-			InvocationTargetException, IllegalAccessException, InstantiationException {
-		Class.forName(clazz.getName());
-		Object instance = null;
+	private void processService(Class<?> clazz) throws Exception {
+		Constructor<?> constructor = clazz.getConstructor();
+		constructor.setAccessible(true);
+		Object target = constructor.newInstance();
+		Object bean;
 		// 如果注解了初始化方法则调用初始化方法（必须为静态方法，不自动注入任何参数），如果没有检测到初始化方法，则默认调用无参的构造方法
 		for (Method m : clazz.getDeclaredMethods()) {
-			if (m.isAnnotationPresent(InitMethod.class)) {
+			if (m.isAnnotationPresent(Bean.class)) {
 				m.setAccessible(true);
-				instance = m.invoke(null);
-				break;
+				bean = m.invoke(target);
+				this.serviceClassInstanceMap.put(m.getReturnType(), bean);
 			}
 		}
-		if (instance == null) {
-			Constructor<?> constructor = clazz.getConstructor();
-			constructor.setAccessible(true);
-			instance = constructor.newInstance();
-		}
-		this.serviceClassInstanceMap.put(clazz, instance);
+		this.serviceClassInstanceMap.put(clazz, target);
 	}
 
 	private void processTestInit(Method m, Object target, String className) {
-		logger.info("Test Class {} is initiating", className);
+		logger.debug(String.format("Test Class %s is initiating", className));
 		try {
 			this.injectArguments(m, target);
 		} catch (Exception e) {
-			logger.error("Test Class {} init failed because of {} ", className, e.getMessage());
+			e.printStackTrace();
+			System.exit(-1);
 		}
 	}
 
-	protected void processTestClass(Class<?> clazz, Object target)
-			throws InvocationTargetException, IllegalAccessException {
-		SyncExecutorManager syncManager = null;
-
+	protected void processTestClass(Class<?> clazz, Object target) throws Exception {
+		SyncExecutorManager syncManager;
 		// 扫描TestClazz下所有方法，首先处理带有TestInit注解的初始化工作，支持注入注册过的Service
 		for (Method method : target.getClass().getDeclaredMethods()) {
 			if (method.isAnnotationPresent(TestInit.class)) {
@@ -115,24 +106,27 @@ public class OrderedPackageLoader extends AbstractPackageLoader {
 			}
 			if (method.isAnnotationPresent(TestMethod.class)) {
 				TestMethod testMethod = method.getAnnotation(TestMethod.class);
-				if (null == syncManager) syncManager = new SyncExecutorManager();
+				syncManager = new SyncExecutorManager();
 				processSyncTestMethod(clazz, target, method, testMethod, syncManager);
 			}
 		}
 	}
 
-	protected void processSyncTestMethod(Class<?> clazz, Object target, Method m, TestMethod testMethod, SyncExecutorManager syncManager) {
+	protected void processSyncTestMethod(Class<?> clazz, Object target, Method m, TestMethod testMethod, SyncExecutorManager syncManager) throws Exception {
 		MethodExecutionInfo info = new MethodExecutionInfo(clazz, target, m, testMethod, dependencyDetection(m));
 		syncManager.addMethod(info);
 		syncManager.exec();
 	}
 
-	protected Object[] dependencyDetection(Method m) {
+	protected Object[] dependencyDetection(Method m) throws Exception {
 		List<Object> objects = new LinkedList<>();
 		for (Parameter parameter : m.getParameters()) {
-			Class<?> clazz = parameter.getClass();
-			objects.add(
-					this.serviceClassInstanceMap.getOrDefault(clazz, null));
+			Class<?> clazz = parameter.getType();
+			Object bean = this.serviceClassInstanceMap.get(clazz);
+			if (null == bean) {
+				throw new Exception("Cannot initiate bean with type: " + clazz.getName());
+			}
+			objects.add(bean);
 		}
 		return objects.toArray();
 	}

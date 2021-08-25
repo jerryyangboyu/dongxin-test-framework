@@ -27,30 +27,27 @@ class Test {
 }
 ```
 ### Concurrent Environment Simulation
+
 ```Java
+import pro.boyu.dongxin.framework.annotations.TestClass;
+import pro.boyu.dongxin.framework.annotations.TestMethod;
+
 @TestClass
 class TestConcurrent {
-    private SharedJedisFactory factory;
-    @InitMethod
-    void init() {
-        factory = LocalJedisFactory.getJedisFactory();
-    }
-
-    @TestMethod
-    void testConcurrent() {
-        ParallelExecutors.exec(() -> {
-            SharedJedis jedis = factory.getJedis();
-            System.out.println(jedis.get("Hello"));
-            jedis.close();
-        })  
+    @TestMethod(threadsNum = 10, repeatTime = 9000, maxTime = 3)
+    void testConcurrent(RedisCenter center) {
+        Assert.assertEquals("World", center.get("Hello"));
     }
 }
 ```
 ### Run Integration Test
+
 ```java
+import pro.boyu.dongxin.framework.TestApplication;
+
 public class App {
     public static void main(String[] args) {
-        OrderedPackageLoader.run(App.class);
+        TestApplication.run(App.class);
     }
 }
 ```
@@ -59,7 +56,7 @@ public class App {
 - impl by zhang ying
 
 ## Authors
-- [Zhang Ying](#)
-- [Jerry Yang](#)
+- [Zhang Ying](https://github.com/shadoowz97)
+- [Jerry Yang](https://boyu.pro)
 - [Li Dongxin](#)
 
