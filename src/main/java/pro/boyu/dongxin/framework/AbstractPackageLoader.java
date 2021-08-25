@@ -1,6 +1,7 @@
 package pro.boyu.dongxin.framework;
 
 import pro.boyu.dongxin.framework.annotations.Exclude;
+import pro.boyu.dongxin.framework.annotations.Service;
 import pro.boyu.dongxin.framework.annotations.TestClass;
 import pro.boyu.dongxin.framework.annotations.TestMethod;
 import pro.boyu.dongxin.utils.logger.Logger;
@@ -36,11 +37,20 @@ public class AbstractPackageLoader {
             logger.debug("Processing class: " + clazz.getName());
             if (clazz.isAnnotationPresent(TestClass.class)) {
                 TestClass classAnnotation = clazz.getAnnotation(TestClass.class);
-                String clazzName = "";
+                String clazzName;
                 if (classAnnotation.value().equals("")) {
                     clazzName = clazz.getName();
                 } else {
                     clazzName = classAnnotation.value();
+                }
+                iocContainer.put(clazzName, clazz);
+            } else if (clazz.isAnnotationPresent(Service.class)) {
+                Service serviceAnnotation = clazz.getAnnotation(Service.class);
+                String clazzName;
+                if (serviceAnnotation.serviceName().equals("")) {
+                    clazzName = clazz.getName();
+                } else {
+                    clazzName = serviceAnnotation.serviceName();
                 }
                 iocContainer.put(clazzName, clazz);
             }

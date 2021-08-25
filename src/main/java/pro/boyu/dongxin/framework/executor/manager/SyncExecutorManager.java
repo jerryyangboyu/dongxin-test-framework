@@ -22,7 +22,7 @@ public class SyncExecutorManager extends Thread{
 			syncTestCaseExecutors.put(level, new LinkedList<>());
 		}
 		if (info.getTestMethod().threadsNum() > 1) {
-			syncTestCaseExecutors.get(level).add(new ParallelExecutors(info));
+			syncTestCaseExecutors.get(level).add(new ParallelExecutors(info, lockObject));
 		} else {
 			syncTestCaseExecutors.get(level).add(new SimpleExecutor(info, lockObject));
 		}
@@ -35,7 +35,7 @@ public class SyncExecutorManager extends Thread{
 			List<Executor> executors=this.syncTestCaseExecutors.get(key);
 			for(Executor executor:executors) {
 				synchronized (this.lockObject){
-					ExecutionObserver observer=new ExecutionObserver();
+					ExecutionObserver observer = new ExecutionObserver();
 					observer.subscribe(executor.getObservable());
 					executor.start();
 					try {

@@ -6,6 +6,7 @@ import pro.boyu.dongxin.framework.infobean.ExecutionInfo;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class Logger {
     public enum FormatType {C, PYTHON, SLF4J};
@@ -30,7 +31,9 @@ public class Logger {
     }
 
     public void exportInfo(OutputInfoBean info) {
+        Map<String, List<OutputInfoBean>> map = LoggerFactory.getMap();
         this.info.add(info);
+        map.put(id, this.info);
         for (OutputInfoBean bean: this.info) {
             for (ExecutionInfo exec: bean.getExecutionInfos()) {
                 String message = TestCaseInfoUtil.executeExceptionInfoUtil(bean.getClassName(), bean.getMethodName(), (int) exec.getTime(), exec.getMessage());
