@@ -10,7 +10,11 @@ import java.util.Date;
 
 public class TestCaseInfoUtil {
 	
-	public static String executeExceptionInfoUtil(String testClass, String methodNameString, int repeatTime, String message) {
+	public static String executeExceptionInfoUtil(String testClass, String methodNameString, String message) {
+		return String.format("Test Class: %s Test Method: %s execute finish in %sms with state %s message %s", testClass, methodNameString, new Date(System.currentTimeMillis()), TestCaseState.ERRORFIN, message);
+	}
+
+	public static String executeSuccessInfoUtil(String testClass, String methodNameString, String message) {
 		return String.format("Test Class: %s Test Method: %s execute finish in %sms with state %s message %s", testClass, methodNameString, new Date(System.currentTimeMillis()), TestCaseState.SUCCESSFIN, message);
 	}
 

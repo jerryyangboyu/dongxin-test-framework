@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class ParallelExecutors extends Executor {
     public static CountDownLatch listenerInitial = new CountDownLatch(1);
-    private static final Logger logger = LoggerFactory.getLogger(ParallelExecutors.class);
+    Logger logger = LoggerFactory.getLogger(ParallelExecutors.class);
     MethodExecutionInfo info;
     final Object lock;
 
@@ -35,7 +35,6 @@ public class ParallelExecutors extends Executor {
     public void run() {
         synchronized (lock) {
             exec();
-            lock.notify();
         }
     }
 
@@ -48,13 +47,15 @@ public class ParallelExecutors extends Executor {
         subject.updateData(new ExecutionInfo(System.currentTimeMillis(), TestCaseState.START));
 
         JUCManager jucManager = new JUCManager();
-        CountDownLatch countDownLatch=new CountDownLatch(parallelism);
+        CountDownLatch listenerCountDownLatch = new CountDownLatch(1);
+
         for (int i = 0; i < parallelism; i++) {
             jucManager.register(new RepeatedThread(info));
         }
-        new Listener(jucManager, info);
 
-         //scheduled task to terminate all running process
+        new Listener(jucManager, info, subject, listenerCountDownLatch);
+
+        //scheduled task to terminate all running process
         ScheduledExecutorService killerService = Executors.newSingleThreadScheduledExecutor();
         killerService.schedule(() -> {
             boolean error = false;
@@ -67,12 +68,21 @@ public class ParallelExecutors extends Executor {
             if (error) {
                 subject.completedError(new OutTimeLimitException(expireTime));
             }
+            listenerCountDownLatch.countDown();
             killerService.shutdown();
         }, expireTime, timeUnit);
 
-        subject.completedSuccess();
-
-        // init listener initial again
-        listenerInitial =  new CountDownLatch(1);
+        try {
+            listenerCountDownLatch.await(); // wait for listener/killer thread to finish
+            if (!killerService.isShutdown()) {
+                // condition if listener successfully finished, but killer service still scheduled.
+                killerService.shutdownNow();
+            }
+        } catch (Exception e) {
+            logger.debug(e.getMessage() + e.getCause());
+        } finally {
+            // init listener initial again
+            listenerInitial =  new CountDownLatch(1);
+        }
     }
 }

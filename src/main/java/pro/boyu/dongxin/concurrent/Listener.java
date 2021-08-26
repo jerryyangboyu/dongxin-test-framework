@@ -1,6 +1,7 @@
 package pro.boyu.dongxin.concurrent;
 
 import pro.boyu.dongxin.framework.infobean.MethodExecutionInfo;
+import pro.boyu.dongxin.framework.subscription.ExecutorSubject;
 import pro.boyu.dongxin.utils.logger.Logger;
 import pro.boyu.dongxin.utils.logger.LoggerFactory;
 
@@ -13,13 +14,16 @@ class Listener extends RepeatedThread implements Subscriber {
     private final Logger logger = LoggerFactory.getLogger("Control Thread");
     private final int threadNum;
     CountDownLatch countDownLatch;
+    CountDownLatch listenerCountDownLatch;
     CyclicBarrier cyclicBarrier;
 
-    public Listener(JUCManager jucManager, MethodExecutionInfo info) {
+    public Listener(JUCManager jucManager, MethodExecutionInfo info, ExecutorSubject subject, CountDownLatch latch) {
         super(info);
         this.jucManager = jucManager;
         this.jucManager.register(this);
         this.threadNum = info.getTestMethod().threadsNum();
+        this.subject = subject;
+        listenerCountDownLatch = latch;
     }
 
     // 控制整个测试流程
@@ -35,8 +39,9 @@ class Listener extends RepeatedThread implements Subscriber {
             this.countDownLatch.await(); // wait for all threads to finish exec
             logger.debug("Thread has been finished");
             subject.completedSuccess();
+            listenerCountDownLatch.countDown(); // mark listener thread finish
         } catch (InterruptedException | BrokenBarrierException e1) {
-            logger.error(e1.getMessage());
+            logger.debug(e1.getMessage() + e1.getCause());
         }
 
     }

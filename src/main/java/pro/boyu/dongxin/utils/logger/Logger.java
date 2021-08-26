@@ -31,11 +31,12 @@ public class Logger {
     public void exportInfo(OutputInfoBean info) {
         LogCache.getCache().appendInfo(id, info);
         for (ExecutionInfo exec: info.getExecutionInfos()) {
-            String message = TestCaseInfoUtil.executeExceptionInfoUtil(info.getClassName(), info.getMethodName(), (int) exec.getTime(), exec.getMessage());
             TestCaseState state = exec.getState();
             if (state == TestCaseState.SUCCESSFIN) {
+                String message = TestCaseInfoUtil.executeSuccessInfoUtil(info.getClassName(), info.getMethodName(), "成功");
                 info(message);
             } else if (state == TestCaseState.ERROR || state == TestCaseState.ERRORFIN) {
+                String message = TestCaseInfoUtil.executeExceptionInfoUtil(info.getClassName(), info.getMethodName(), exec.getMessage());
                 error(message);
             }
         }
