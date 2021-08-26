@@ -2,7 +2,7 @@
 
 ## Features
 - Write a simple test case using only @TestMethod Annotation
-- Multithread test case support
+- Multithreading test case support
 - Asynchronous and Synchronous execution of test cases
 - Simulation of concurrent environment support
 - Component management & Dependency injection
@@ -35,7 +35,7 @@ class Test {
 ### Log Message Inside the Test Case
 > Note: You are not recommended to print output text in console inside test case method, you should inject a ExecutorSubject to log instead.
 
-You should use @CaseSubject to indicate you want to inject a subject correspond to each test method, and use `subject.updateData()` to print your log side the test method.
+You should use @CaseSubject with ExecutorSubject type parameter declaration in each test method, and use `subject.updateData()` to print your log inside the test method.
 
 ```java
 import pro.boyu.dongxin.framework.annotations.CaseSubject;
@@ -55,12 +55,15 @@ class TestLog {
 }
 ```
 ### Service Injection
-Sometimes, a test case may relay on other third party modules, like redis client. Usually, we initialize those modules inside a test method. However, you may wish to manage the third party module by your self separately.
-Therefore, @Service annotation allows you to define you own service class, and @Bean annotation allows you to define your module client managed by the framework. the module client will be automatically injected into the test method.
+Sometimes, a test case may rely on other third party modules, like redis client. In practical, you may not initialize those modules inside a test method. Instead, you may manage the third party module separately.
+Therefore, @Service annotation allows you to define you own service class, and @Bean annotation allows you to define your module client. You can use them by declaring parameters in your test method. 
+The module client will be automatically injected into the parameter you declared, as the client instance will be automatically loaded into the ioc container.
 
 ```java
 import pro.boyu.dongxin.framework.annotations.Bean;
 import pro.boyu.dongxin.framework.annotations.Service;
+import pro.boyu.dongxin.framework.annotations.TestClass;
+import pro.boyu.dongxin.framework.annotations.TestMethod;
 
 @Service
 class MyServiceClass {
@@ -70,9 +73,16 @@ class MyServiceClass {
         return center.getRedis();
     }
 }
+
+@TestClass
+class TestServiceClass {
+    @TestMethod
+    void testService(RedisClient client) {
+        client.doSomeThing();
+    }
+}
 ```
 ### Concurrent Environment Simulation
-
 ```Java
 import pro.boyu.dongxin.framework.annotations.TestClass;
 import pro.boyu.dongxin.framework.annotations.TestMethod;
@@ -117,5 +127,5 @@ public class App {
 ## Authors
 - [Zhang Ying](https://github.com/shadoowz97)
 - [Jerry Yang](https://boyu.pro)
-- [Li Dongxin](#)
+- [Li Dongxin](https://github.com/Thesmall943)
 
